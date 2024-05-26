@@ -1,10 +1,5 @@
-﻿using PowerArgs;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SqlAzureBakMaker
 {
@@ -12,7 +7,7 @@ namespace SqlAzureBakMaker
     {
         static void Main(string[] args)
         {
-            var parms = Args.Parse<MyArgs>(args);
+            var parms = new MyArgs();// Args.Parse<MyArgs>(args);
 
             Console.WriteLine("Starting");
             var sw = new Stopwatch();

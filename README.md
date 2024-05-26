@@ -1,58 +1,50 @@
 # SqlAzureBakMaker
 This project is designed to provide a simple framework to create a .BAK File from a SQL Azure database. 
 
-##Native Support?
+## Native Support?
 The platform doesn't have native support to create .bak files from SQL Azure databases, today. If you would like to see native support please up vote it here: https://feedback.azure.com/forums/217321-sql-database/suggestions/10460739-backup-restore-to-from-bak-file
 
-##How it works
+## How it works
 The project utilized a bit of SQL Server Management Objects (SMO) magic to automate the following steps:
 
-1. Create a local database on SQL IaaS
-2. Copy the schema from SQL Azure to SQL IaaS
-3. Copy the data from SQL Azure to SQL IaaS
-4. Create a backup of the SQL IaaS system to Azure Blob Storage
+1. Create a local database
+2. Copy the schema from SQL Azure to the local db
+3. Copy the data from SQL Azure to the local db
+4. Create a backup of the local db to the local disk
 
-##Getting Started
+## Getting Started
 
-###Setup
-1. (optional) Use Point in Time Restore to generate a copy of your transactional SQL Azure Database (https://azure.microsoft.com/en-us/blog/azure-sql-database-point-in-time-restore/)
-  * While this step is optional, using a restored copy of the soruce database will ensure that the source system is not changing during the processes and reduce the impact that this process will have on your source system.  
-2. Create a D series VM in the SAME Azure Region as your SQL Azure Database
-  * (recommended) Use an image that contains SQL Server already installed
-3. Open the port in the Azure SQL DB so that the VM can access
-4. Create a local SQL Account on your VM and turn on SQL Server Authentication
-  * This will require a restart of the SQL Service
-5. Using SSMS on the VM test that you can log into the SQL Azure Database and the Local SQL Server
+### Requirements
+1. SQL Server LocalDb instance
 
-###Run this tool
+### Run this tool
 1. Download the source from this repo, compile it
-2. Execute the following command
-SqlAzureBakMaker.exe -SourceServer "" -SourceUser "" -SourcePassword "" -SourceDatabase "" -DestinationServer "." -DestinationUser "" -DestinationPassword "" -DestinationDatabase "" -StorageAccountName "" -StorageContainer "" -StorageFileBase "" -StorageKey "" -PathToLocalMdf ""
+2. Execute the following command (it will prompt for any missing switches)
+```
+SqlAzureBakMaker.exe -SourceServer "" -SourceUser "" -SourcePassword "" -SourceDatabase "" -DestinationServer "" -DestinationDatabase "" -PathToLocalMdf "" -BakPath ""
+
+Example:
+SqlAzureBakMaker.exe -SourceServer "my-db.database.windows.net" -SourceUser "aplicMain" -SourcePassword "As@VeYJhjazz_GY4" -SourceDatabase "GuardarGrana" -DestinationServer "(LocalDB)\MSSQLLocalDB" -DestinationDatabase "ProdErp" -PathToLocalMdf "C:\Users\admin" -BakPath "C:\Temp"
+
+SqlAzureBakMaker.exe -SourceServer "the-right.database.windows.net" -SourceUser "aplicSiger" -SourcePassword "#As@VeYJhzz_GYe4" -SourceDatabase "GuardarGrana" -DestinationServer "(LocalDB)\MSSQLLocalDB" -DestinationDatabase "GuardarGrana" -PathToLocalMdf "C:\Users\admin" -BakPath "C:\Temp"
+
+
+SqlAzureBakMaker.exe -SourceServer "the-right.database.windows.net" -SourceUser "aplicSiger" -SourcePassword "#As@VeYJhzz_GYe4" -SourceDatabase "GuardarGrana" -DestinationServer "bd.asp.hostazul.com.br,3533" -DestinationDatabase "9295_prod_gtech_erp" -PathToLocalMdf "C:\Users\admin" -BakPath "C:\Temp"
+```
 
   * -SourceServer: The full server name for the source SQL Azure DB (ex. something.database.windows.net,1433)
   * -SourceUser: The username for the source SQL Azure DB
-  * -SourcePassword: The password for the soruce SQL Azure DB
+  * -SourcePassword: The password for the source SQL Azure DB
   * -SourceDatabase: The database name for the source SQL Azure DB
-  * -DestinationServer: The destination server (this will typically be the local SQL IaaS instance that you are creating a temporary copy of your database on, this DB will be used to create the .bak file, so you can just use a ".")
-  * -DestinationUser: The username for the destination server 
-  * -DestinationPassword: The password for the destination server
-  * -DestinationDatabase: The database name you want to use on the destination server
-    * CAUTION: If this database already exits it will be dropped!
-  * -StorageAccountName: This is the name of the storage account (note: just the name not the full domain)
-  * -StorageContainer: This is the name of the conatiner in the storage account you want to put the .bak file in
-  * -StorageFileBase: this will be the prefix used for the .bak file, appended to the end will be the date the bak was created
-  * -StorageKey: the key for the storage account
-  * -PathToLocalMdf: the path to where you want to put the MDF file on the IaaS VM (NOTE: put this somewhere on the D drive if you are using a D Series VM since it is an SSD)
-  * -StorageEndpointBase: (optional) use this to override the default storage endpoint base (blob.core.windows.net) if you are not running on Azure Commercial
+  * -DestinationServer: The destination server
+  * -DestinationDatabase: The database name you want to use on the destination server *CAUTION:* If this database already exits it will be dropped!
+  * -PathToLocalMdf: the path to where you want to put the MDF file
+  * -BakPath: the path to where you want to put the .bak file
   
-###Cleanup
-1. Destroy the D series VM (you might just want to shut it down if you plan on doing this freqently)
-2. Destroy the Point in Time restored SQL Azure DB (if you created one)
-
-##How it was tested
+## How it was tested
 This project was tested against the sample AdventureWorks database that the Azure portal will inject into a new database for you. 
 
-##Warrantee
+## Warranty
 This code is a sample, use at own risk. Please submit a pull request if you find a bug. 
 
 ## Copyright and License
